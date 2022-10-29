@@ -74,7 +74,7 @@ exports.addStock = async (req, res, next) => {
   }
 };
 
-exports.subStock = async(req, res, next) => {
+exports.subStock = async (req, res, next) => {
   if (!req.body) {
     const error = new Error("Error occured while trying to update stock!.");
     error.title = "Error Occured";
@@ -145,6 +145,7 @@ exports.subStock = async(req, res, next) => {
 
 exports.getHistory = (req, res, next) => {
   Inventory.find({})
+    .sort({ dateAdded: -1 })
     .then((result) => {
       res.json(result);
     })
