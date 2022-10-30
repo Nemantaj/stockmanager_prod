@@ -36,7 +36,7 @@ exports.getInventory = (req, res, next) => {
 exports.getOrdersByDate = (req, res, next) => {
   const gteDate = new Date(req.query.gte);
   const lteDate = new Date(req.query.lte);
-  const adjLteDate = lteDate.setMilliseconds(86340000);
+  const adjLteDate = lteDate.setMilliseconds(86399000);
 
   if (!gteDate || !lteDate) {
     const error = new Error("Error occured while trying to retrieve orders!.");
@@ -66,7 +66,7 @@ exports.getOrdersByDate = (req, res, next) => {
 exports.groupByDate = (req, res, next) => {
   const gteDate = new Date(req.query.gte);
   const lteDate = new Date(req.query.lte);
-  const adjLteDate = lteDate.setMilliseconds(86340000);
+  const adjLteDate = lteDate.setMilliseconds(86399000);
 
   if (!gteDate || !lteDate) {
     const error = new Error("Error occured while trying to retrieve orders!.");
@@ -136,7 +136,7 @@ exports.groupByDate = (req, res, next) => {
 exports.getVouchersByDate = (req, res, next) => {
   const gteDate = new Date(req.query.gte);
   const lteDate = new Date(req.query.lte);
-  const adjLteDate = lteDate.setMilliseconds(86340000);
+  const adjLteDate = lteDate.setMilliseconds(86399000);
 
   if (!gteDate || !lteDate) {
     const error = new Error("Error occured while trying to retrieve orders!.");
