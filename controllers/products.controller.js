@@ -50,6 +50,7 @@ exports.getOrdersByDate = (req, res, next) => {
       $gte: gteDate,
       $lt: new Date(adjLteDate),
     },
+    isPaid: true
   })
     .sort({ order_date: 1 })
     .then((result) => {
