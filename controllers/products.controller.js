@@ -34,8 +34,9 @@ exports.getInventory = (req, res, next) => {
 };
 
 exports.getOrdersByDate = (req, res, next) => {
-  const gteDate = req.query.gte;
-  const lteDate = req.query.lte;
+  const gteDate = new Date(req.query.gte);
+  const lteDate = new Date(req.query.lte);
+  const adjLteDate = lteDate.setMilliseconds(86340000);
 
   if (!gteDate || !lteDate) {
     const error = new Error("Error occured while trying to retrieve orders!.");
@@ -46,11 +47,12 @@ exports.getOrdersByDate = (req, res, next) => {
 
   Order.find({
     order_date: {
-      $gte: new Date(gteDate),
-      $lt: new Date(lteDate),
+      $gte: gteDate,
+      $lt: new Date(adjLteDate),
     },
+    isPaid: true
   })
-    .sort({ order_date: -1 })
+    .sort({ order_date: 1 })
     .then((result) => {
       res.json(result);
     })
@@ -63,8 +65,9 @@ exports.getOrdersByDate = (req, res, next) => {
 };
 
 exports.groupByDate = (req, res, next) => {
-  const gteDate = req.query.gte;
-  const lteDate = req.query.lte;
+  const gteDate = new Date(req.query.gte);
+  const lteDate = new Date(req.query.lte);
+  const adjLteDate = lteDate.setMilliseconds(86340000);
 
   if (!gteDate || !lteDate) {
     const error = new Error("Error occured while trying to retrieve orders!.");
@@ -77,8 +80,8 @@ exports.groupByDate = (req, res, next) => {
     {
       $match: {
         order_date: {
-          $gte: new Date(gteDate),
-          $lt: new Date(lteDate),
+          $gte: gteDate,
+          $lt: new Date(adjLteDate),
         },
       },
     },
@@ -132,8 +135,9 @@ exports.groupByDate = (req, res, next) => {
 };
 
 exports.getVouchersByDate = (req, res, next) => {
-  const gteDate = req.query.gte;
-  const lteDate = req.query.lte;
+  const gteDate = new Date(req.query.gte);
+  const lteDate = new Date(req.query.lte);
+  const adjLteDate = lteDate.setMilliseconds(86340000);
 
   if (!gteDate || !lteDate) {
     const error = new Error("Error occured while trying to retrieve orders!.");
@@ -151,13 +155,14 @@ exports.getVouchersByDate = (req, res, next) => {
     {
       $match: {
         date: {
-          $gte: new Date(gteDate),
-          $lt: new Date(lteDate),
+          $gte: gteDate,
+          $lt: new Date(adjLteDate),
         },
       },
     },
     { $group: { _id: "$date", data: { $push: "$$ROOT" } } },
   ])
+    .sort({ _id: 1 })
     .then((result) => {
       if (result.length < 1) {
         return res.json([]);
@@ -201,3 +206,70 @@ exports.getVouchersByDate = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getProductsByDate = (req, res, next) => {
+  const gteDate = new Date(req.query.gte);
+  const lteDate = new Date(req.query.lte);
+  const adjLteDate = lteDate.setMilliseconds(86340000);
+
+  if (!gteDate || !lteDate) {
+    const error = new Error("Error occured while trying to retrieve orders!.");
+    error.title = "Error Occured";
+    error.statusCode = 422;
+    throw error;
+  }
+
+  Order.aggregate([
+    {
+      $match: {
+        isPaid: true, order_date: {
+          $gte: gteDate,
+          $lt: new Date(adjLteDate),
+        }
+      },
+    },
+    { $unwind: '$products1' },
+    { $group: { _id: { id: '$products1.product_id', name: '$products1.name', variants: '$products1.desc', }, orders: { $sum: 1 }, total_value: { $sum: '$products1.price' }, total_quantity: { $sum: '$products1.quantity' }, type: { $first: '$products1.product' } } },
+  ]).then(result => {
+    let newData = result;
+    if (newData.length > 0) {
+      newData = result.map(doc => {
+        let productType;
+        if (doc.type === '1') {
+          productType = "iPhone"
+        } else if (doc.type === "2") {
+          productType = "Watch"
+        } else {
+          productType = "AirPods"
+        }
+        return {
+          id: doc._id.id,
+          name: doc._id.name,
+          variant: doc._id.variants,
+          totalOrders: doc.orders,
+          totalValue: doc.total_value,
+          totalQuantity: doc.total_quantity,
+          type: productType
+        }
+      }).sort((a, b) => {
+        let fa = a.name.toLowerCase();
+
+        let fb = b.name.toLowerCase()
+
+        if (fa < fb) {
+            return -1;
+        }
+        if (fa > fb) {
+            return 1;
+        }
+        return 0;
+    });
+    }
+    res.json(newData);
+  }).catch((err) => {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  });
+}
