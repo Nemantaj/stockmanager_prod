@@ -1,3 +1,4 @@
+
 const express = require("express");
 const ProductController = require("../controllers/products.controller");
 
@@ -7,5 +8,7 @@ router.get("/get-inventory", ProductController.getInventory);
 router.get("/get-orders", ProductController.getOrdersByDate);
 router.get("/group-orders", ProductController.groupByDate);
 router.get("/get-vouchers-by-date", ProductController.getVouchersByDate);
+router.get("/get-products-by-date", ProductController.getProductsByDate)
 
 module.exports = router;
+
