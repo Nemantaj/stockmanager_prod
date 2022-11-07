@@ -1,4 +1,3 @@
-
 const iPhones = require("../models/iPhones");
 const iPods = require("../models/iPods");
 const iWatches = require("../models/iWatches");
@@ -231,6 +230,7 @@ exports.getProductsByDate = (req, res, next) => {
     },
     { $unwind: '$products1' },
     { $group: { _id: { id: '$products1.product_id', name: '$products1.name', variants: '$products1.desc', }, orders: { $sum: 1 }, total_value: { $sum: '$products1.price' }, total_quantity: { $sum: '$products1.quantity' }, type: { $first: '$products1.product' } } },
+    { $sort: { type: 1 } }
   ]).then(result => {
     let newData = result;
     if (newData.length > 0) {
@@ -252,19 +252,7 @@ exports.getProductsByDate = (req, res, next) => {
           totalQuantity: doc.total_quantity,
           type: productType
         }
-      }).sort((a, b) => {
-        let fa = a.name.toLowerCase();
-
-        let fb = b.name.toLowerCase()
-
-        if (fa < fb) {
-            return -1;
-        }
-        if (fa > fb) {
-            return 1;
-        }
-        return 0;
-    });
+      });
     }
     res.json(newData);
   }).catch((err) => {

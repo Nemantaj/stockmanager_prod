@@ -11,4 +11,3 @@ router.get("/get-vouchers-by-date", ProductController.getVouchersByDate);
 router.get("/get-products-by-date", ProductController.getProductsByDate)
 
 module.exports = router;
-
