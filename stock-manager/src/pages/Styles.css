@@ -1,0 +1,184 @@
+.alignDivCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.homeDiv {
+  height: 100vh;
+}
+
+.p1 {
+  padding: 20px;
+  gap: 20px;
+}
+
+.input1 {
+  text-align: right !important;
+}
+
+.homeAction {
+  padding: 20px;
+  text-align: center;
+  border: 1px solid rgb(46, 46, 46);
+  border-radius: 20px;
+}
+
+.homeActionCon {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-gap: 10px !important;
+}
+
+.header {
+  padding: 10px;
+  display: inline-flex;
+  width: 100%;
+  height: 50px;
+  left: 0;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  position: fixed;
+  z-index: 999;
+  background-color: #fff;
+}
+
+.headerLink {
+  width: 70px;
+}
+
+.headerLinkAddon {
+  display: inline-flex;
+  gap: 3px;
+  justify-content: flex-end;
+}
+
+.icoAdjust {
+  position: relative;
+  top: 2px;
+}
+
+.qtyContainer {
+  padding-top: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qtyInputLine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+}
+
+.qty {
+  width: 60%;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  border-radius: 12px;
+}
+
+.qtyProd {
+  background-color: #f1f3f5;
+  padding: 5px 10px;
+  border-radius: 12px;
+  width: 60px;
+}
+
+.reportDate {
+  max-width: 100%;
+  display: flex !important;
+  flex-wrap: wrap;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.orderCardInfo {
+  text-align: center;
+  width: 30%;
+}
+
+.detailsText {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prodBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.linkWidth {
+  width: 100%;
+  max-width: 550px;
+}
+
+.boxShadow {
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.tableDiv {
+  padding-top: 70px;
+}
+
+.tableColumn {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nextui-table-row {
+  border-radius: 12px !important;
+}
+
+.ordersDiv {
+  gap: 10px;
+}
+
+.margin70 {
+  padding-top: 70px;
+}
+
+.productDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.invtryNav {
+  position: fixed;
+  bottom: 10px;
+}
+
+.qtyHeader {
+  width: 100%;
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.spcBtn {
+  justify-content: space-between;
+}
+
+.spaceDiv {
+  margin-bottom: 50px;
+}
+
+.groupCardFlex {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
