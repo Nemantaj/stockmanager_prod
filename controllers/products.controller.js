@@ -50,7 +50,7 @@ exports.getOrdersByDate = (req, res, next) => {
       $gte: gteDate,
       $lt: new Date(adjLteDate),
     },
-    isPaid: true
+    isPaid: true,
   })
     .sort({ order_date: 1 })
     .then((result) => {
@@ -116,11 +116,63 @@ exports.groupByDate = (req, res, next) => {
           },
         },
         other: {
-          $sum: { $cond: [{ $eq: ["$payment_type", "Other"] }, "$total", 0] },
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $eq: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
+              "$total",
+              0,
+            ],
+          },
+        },
+        otherCash: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $ne: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
+              "$paid_struc.cash",
+              0,
+            ],
+          },
+        },
+        otherCard: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $ne: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
+              "$paid_struc.card",
+              0,
+            ],
+          },
+        },
+        otherBank: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $ne: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
+              "$paid_struc.bank",
+              0,
+            ],
+          },
         },
       },
     },
-
     { $sort: { _id: -1 } },
   ])
     .then((result) => {
@@ -222,43 +274,58 @@ exports.getProductsByDate = (req, res, next) => {
   Order.aggregate([
     {
       $match: {
-        isPaid: true, order_date: {
+        isPaid: true,
+        order_date: {
           $gte: gteDate,
           $lt: new Date(adjLteDate),
-        }
+        },
       },
     },
-    { $unwind: '$products1' },
-    { $group: { _id: { id: '$products1.product_id', name: '$products1.name', variants: '$products1.desc', }, orders: { $sum: 1 }, total_value: { $sum: '$products1.price' }, total_quantity: { $sum: '$products1.quantity' }, type: { $first: '$products1.product' } } },
-    { $sort: { type: 1 } }
-  ]).then(result => {
-    let newData = result;
-    if (newData.length > 0) {
-      newData = result.map(doc => {
-        let productType;
-        if (doc.type === '1') {
-          productType = "iPhone"
-        } else if (doc.type === "2") {
-          productType = "Watch"
-        } else {
-          productType = "AirPods"
-        }
-        return {
-          id: doc._id.id,
-          name: doc._id.name,
-          variant: doc._id.variants,
-          totalOrders: doc.orders,
-          totalValue: doc.total_value,
-          totalQuantity: doc.total_quantity,
-          type: productType
-        }
-      });
-    }
-    res.json(newData);
-  }).catch((err) => {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-  });
-}
+    { $unwind: "$products1" },
+    {
+      $group: {
+        _id: {
+          id: "$products1.product_id",
+          name: "$products1.name",
+          variants: "$products1.desc",
+        },
+        orders: { $sum: 1 },
+        total_value: { $sum: "$products1.price" },
+        total_quantity: { $sum: "$products1.quantity" },
+        type: { $first: "$products1.product" },
+      },
+    },
+    { $sort: { type: 1 } },
+  ])
+    .then((result) => {
+      let newData = result;
+      if (newData.length > 0) {
+        newData = result.map((doc) => {
+          let productType;
+          if (doc.type === "1") {
+            productType = "iPhone";
+          } else if (doc.type === "2") {
+            productType = "Watch";
+          } else {
+            productType = "AirPods";
+          }
+          return {
+            id: doc._id.id,
+            name: doc._id.name,
+            variant: doc._id.variants,
+            totalOrders: doc.orders,
+            totalValue: doc.total_value,
+            totalQuantity: doc.total_quantity,
+            type: productType,
+          };
+        });
+      }
+      res.json(newData);
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
