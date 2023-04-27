@@ -16,6 +16,7 @@ const Inventory = new Schema({
   },
   add: { type: Number },
   sub: { type: Number },
+  prev: { type: Number },
 });
 
 module.exports = mongoose.model("NewInventory", Inventory);

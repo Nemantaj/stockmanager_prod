@@ -15,10 +15,19 @@ exports.addStock = async (req, res, next) => {
   const id = req.body.id;
   const variantId = req.body.variantId;
 
-  let response;
+  let response, previous, prevQty;
 
   try {
     if (req.body.category === "iPhones") {
+      previous = await iPhones.findOne({
+        pid: req.body.pid,
+        "variants._id": variantId,
+      });
+
+      prevQty = previous?.variants?.find((doc) => {
+        return doc?._id?.toString() === variantId?.toString();
+      });
+
       response = await iPhones.findOneAndUpdate(
         {
           pid: req.body.pid,
@@ -32,6 +41,10 @@ exports.addStock = async (req, res, next) => {
         { new: true }
       );
     } else if (req.body.category === "AirPods") {
+      prevQty = await iPods.findOne({
+        _id: mongoose.Types.ObjectId(req.body.id),
+      });
+
       response = await iPods.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(req.body.id) },
         {
@@ -42,6 +55,15 @@ exports.addStock = async (req, res, next) => {
         { new: true }
       );
     } else {
+      previous = await iWatches.findOne({
+        pid: req.body.pid,
+        "variants._id": variantId,
+      });
+
+      prevQty = previous?.variants?.find((doc) => {
+        return doc?._id?.toString() === variantId?.toString();
+      });
+
       response = await iWatches.findOneAndUpdate(
         {
           pid: req.body.pid,
@@ -62,7 +84,10 @@ exports.addStock = async (req, res, next) => {
       name: req.body.name,
       desc: req.body.desc,
       add: req.body.add,
+      prev: prevQty.quantity,
     });
+
+    console.log(newInvtry);
 
     await newInvtry.save();
     res.json({ response, category: req.body.category });
@@ -82,12 +107,21 @@ exports.subStock = async (req, res, next) => {
     throw error;
   }
 
-  let response;
+  let response, previous, prevQty;
   const id = req.body.id;
   const variantId = req.body.variantId;
 
   try {
     if (req.body.category === "iPhones") {
+      previous = await iPhones.findOne({
+        pid: req.body.pid,
+        "variants._id": variantId,
+      });
+
+      prevQty = previous?.variants?.find((doc) => {
+        return doc?._id?.toString() === variantId?.toString();
+      });
+
       response = await iPhones.findOneAndUpdate(
         {
           pid: req.body.pid,
@@ -101,6 +135,10 @@ exports.subStock = async (req, res, next) => {
         { new: true }
       );
     } else if (req.body.category === "AirPods") {
+      prevQty = await iPods.findOne({
+        _id: mongoose.Types.ObjectId(req.body.id),
+      });
+
       response = await iPods.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(req.body.id) },
         {
@@ -111,6 +149,15 @@ exports.subStock = async (req, res, next) => {
         { new: true }
       );
     } else {
+      previous = await iWatches.findOne({
+        pid: req.body.pid,
+        "variants._id": variantId,
+      });
+
+      prevQty = previous?.variants?.find((doc) => {
+        return doc?._id?.toString() === variantId?.toString();
+      });
+
       response = await iWatches.findOneAndUpdate(
         {
           pid: req.body.pid,
@@ -131,6 +178,7 @@ exports.subStock = async (req, res, next) => {
       name: req.body.name,
       desc: req.body.desc,
       sub: req.body.sub,
+      prev: prevQty.quantity
     });
 
     await newInvtry.save();
