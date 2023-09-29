@@ -1,3 +1,4 @@
+const path = require("path");
 const pdf = require("html-pdf");
 const opt = {
   phantomPath: path.resolve(
