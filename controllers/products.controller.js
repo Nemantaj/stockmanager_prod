@@ -381,8 +381,12 @@ exports.printPDF = async (req, res, next) => {
 
     let orders = data?.orders?.map((doc) => {
       return {
-        date: new Date(doc?.order_date)?.toLocaleDateString(),
-        time: new Date(doc?.order_date)?.toLocaleTimeString(),
+        date: new Date(doc?.order_date)?.toLocaleDateString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
+        time: new Date(doc?.order_date)?.toLocaleTimeString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
         products: doc?.products1?.map((d) => {
           return `${d?.name} ${d?.desc}`;
         }),
@@ -419,8 +423,12 @@ exports.printPDF = async (req, res, next) => {
 
     let expenses = data?.expenses.map((doc) => {
       return {
-        date: new Date(doc?.createdAt)?.toLocaleDateString(),
-        time: new Date(doc?.createdAt)?.toLocaleTimeString(),
+        date: new Date(doc?.createdAt)?.toLocaleDateString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
+        time: new Date(doc?.createdAt)?.toLocaleTimeString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
         products: [doc?.reason],
         cash: 0,
         card: 0,
@@ -484,7 +492,7 @@ exports.printPDF = async (req, res, next) => {
 
     var options = {
       displayHeaderFooter: false,
-      format: "A2",
+      format: "A3",
       margin: "0px",
       printBackground: true,
     };

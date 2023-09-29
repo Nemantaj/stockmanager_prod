@@ -117,11 +117,11 @@
           <%})%>
           <tr>
             <td class="subtotal" colspan="2">Subtotal</td>
-            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=cash%></td>
-            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=card%></td>
-            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=cashfree%></td>
-            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=online%></td>
-            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=total%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=cash?.toLocaleString("en-IN")%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=card?.toLocaleString("en-IN")%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=cashfree?.toLocaleString("en-IN")%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=online?.toLocaleString("en-IN")%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=total?.toLocaleString("en-IN")%></td>
             <td class="subtotal" colspan="1"></td>
           </tr>
           <!-- Add more rows as needed -->
@@ -139,25 +139,25 @@
           <tbody style="vertical-align: top">
             <tr>
               <td>Cash</td>
-              <td><strong>&#8377;&nbsp;<%=cash%></strong></td>
+              <td><strong>&#8377;&nbsp;<%=cash?.toLocaleString("en-IN")%></strong></td>
             </tr>
             <tr>
               <td>Card</td>
-              <td><strong>&#8377;&nbsp;<%=card%></strong></td>
+              <td><strong>&#8377;&nbsp;<%=card?.toLocaleString("en-IN")%></strong></td>
             </tr>
             <tr>
               <td>Cashfree</td>
-              <td><strong>&#8377;&nbsp;<%=cashfree%></strong></td>
+              <td><strong>&#8377;&nbsp;<%=cashfree?.toLocaleString("en-IN")%></strong></td>
             </tr>
             <tr>
               <td>Online</td>
-              <td><strong>&#8377;&nbsp;<%=online%></strong></td>
+              <td><strong>&#8377;&nbsp;<%=online?.toLocaleString("en-IN")%></strong></td>
             </tr>
             <tr>
               <td>Expenses</td>
               <td>
                 <strong style="color: #e3073c"
-                  >-&#8377;&nbsp;<%=expense%></strong
+                  >-&#8377;&nbsp;<%=expense?.toLocaleString("en-IN")%></strong
                 >
               </td>
             </tr>
@@ -166,7 +166,7 @@
       </div>
       <div class="total">
         <h2>Total Sales</h2>
-        <p>&#8377;&nbsp;<%=total%></p>
+        <p>&#8377;&nbsp;<%=total?.toLocaleString("en-IN")%></p>
       </div>
     </div>
   </body>
