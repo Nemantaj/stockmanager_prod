@@ -1,6 +1,13 @@
+const fs = require("fs");
+const path = require("path");
+const ejs = require("ejs");
+const puppeteer = require("../utils/pupeeteer");
+
 const iPhones = require("../models/iPhones");
 const iPods = require("../models/iPods");
 const iWatches = require("../models/iWatches");
+const Expense = require("../models/Expense");
+const Stock = require("../models/stock");
 const mongoose = require("mongoose");
 const db = mongoose.connection.db;
 const Order = mongoose.model("Order", new mongoose.Schema(), "orders");
@@ -328,4 +335,217 @@ exports.getProductsByDate = (req, res, next) => {
       }
       next(err);
     });
+};
+
+exports.getPdfData = async (req, res, next) => {
+  try {
+    const gteDate = new Date(req.params.date);
+    gteDate.setUTCHours(0, 0, 0, 0);
+    let lteDate = new Date(gteDate);
+    lteDate.setUTCHours(23, 59, 59, 0);
+
+    console.log(gteDate, lteDate);
+
+    let orders = await Order.find({
+      order_date: { $gte: gteDate, $lt: new Date(lteDate) },
+    }).lean();
+
+    let expenses = await Expense.find({
+      createdAt: { $gte: gteDate, $lt: new Date(lteDate) },
+    }).lean();
+
+    return res.json({ success: true, payload: { orders, expenses } });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.clear = async (req, res, next) => {
+  try {
+    await Expense.updateMany({}, { $set: { cleared: true } });
+    return res.json({ success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.printPDF = async (req, res, next) => {
+  try {
+    const { data, date } = req.body;
+
+    let orders = data?.orders?.map((doc) => {
+      return {
+        date: new Date(doc?.order_date)?.toLocaleDateString(),
+        time: new Date(doc?.order_date)?.toLocaleTimeString(),
+        products: doc?.products1?.map((d) => {
+          return `${d?.name} ${d?.desc}`;
+        }),
+        cash:
+          doc?.payment_type === "Other"
+            ? doc?.paid_struc?.cash
+            : doc?.payment_type === "Cash"
+            ? doc?.total
+            : 0,
+        card:
+          doc?.payment_type === "Other"
+            ? doc?.paid_struc?.card
+            : doc?.payment_type === "Card"
+            ? doc?.total
+            : 0,
+        cashfree:
+          doc?.payment_type === "Other"
+            ? 0
+            : doc?.payment_type === "Cashfree"
+            ? doc?.total
+            : 0,
+        online:
+          doc?.payment_type === "Other"
+            ? doc?.paid_struc?.bank
+            : doc?.payment_type === "Online"
+            ? doc?.total
+            : 0,
+        total: doc?.total,
+        name: doc?.billName,
+        Date: doc?.order_date,
+        type: "order",
+      };
+    });
+
+    let expenses = data?.expenses.map((doc) => {
+      return {
+        date: new Date(doc?.createdAt)?.toLocaleDateString(),
+        time: new Date(doc?.createdAt)?.toLocaleTimeString(),
+        products: [doc?.reason],
+        cash: 0,
+        card: 0,
+        cashfree: 0,
+        online: 0,
+        total: doc?.amount,
+        name: doc?.name,
+        Date: doc?.createdAt,
+        type: "expense",
+      };
+    });
+
+    console.log(expenses, data?.expense);
+
+    let mixed = [...orders, ...expenses]?.sort((a, b) => {
+      return new Date(a.Date) - new Date(b.Date);
+    });
+
+    let total = 0,
+      cash = 0,
+      card = 0,
+      cashfree = 0,
+      online = 0,
+      expense = 0;
+
+    expense = expenses?.reduce((a, b) => a + b?.total, 0);
+    cash = orders?.reduce(
+      (a, b) => a + (b?.cash !== undefined ? b?.cash : 0),
+      0
+    );
+    card = orders?.reduce(
+      (a, b) => a + (b?.card !== undefined ? b?.card : 0),
+      0
+    );
+    cashfree = orders?.reduce(
+      (a, b) => a + (b?.cashfree !== undefined ? b?.cashfree : 0),
+      0
+    );
+    online = orders?.reduce(
+      (a, b) => a + (b?.online !== undefined ? b?.online : 0),
+      0
+    );
+
+    total = cash + card + cashfree + online - expense;
+
+    var templateEjs = fs.readFileSync(
+      path.join(__dirname + "/print.ejs"),
+      "utf8"
+    );
+    var template = ejs.compile(templateEjs);
+    var html = template({
+      date,
+      reports: mixed,
+      total,
+      cash,
+      card,
+      cashfree,
+      online,
+      expense,
+    });
+
+    var options = {
+      displayHeaderFooter: false,
+      format: "A3",
+      margin: "0px",
+      printBackground: true,
+    };
+
+    let pdfS = await puppeteer.getStream(html, options);
+    pdfS.pipe(res);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getStocks = async (req, res, next) => {
+  try {
+    let { gte, lte } = req.body;
+    lte = new Date(lte);
+    lte.setUTCHours(23, 59, 59, 0);
+
+    const items = await Stock.find({
+      createdAt: { $gte: gte, $lte: lte },
+    }).lean();
+
+    return res.json({ success: true, items });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getAllStocks = async (req, res, next) => {
+  try {
+    const items = await Stock.find({}).lean();
+
+    return res.json({ success: true, items });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.createRecord = async (req, res, next) => {
+  try {
+    let { input, amount, type } = req.body;
+    const doc = new Stock({
+      input,
+      amount,
+      type,
+    });
+
+    await doc.save();
+    return res.json({ success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };

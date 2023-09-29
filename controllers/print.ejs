@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store Sales Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Add any additional meta tags, stylesheets, or scripts here -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        display: flex;
+        display: -webkit-box;
+        justify-content: center;
+        -webkit-box-pack: center;
+        align-items: center;
+        font-family: "IBM Plex Sans", sans-serif;
+      }
+      .container {
+        width: 95%;
+        padding: 20px;
+        background-color: #fff;
+      }
+      h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      h2 {
+        font-size: 18px;
+        color: #555;
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .summary {
+        margin-top: 20px;
+      }
+      .subtotal {
+        font-weight: bold;
+      }
+      .total {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div
+        style="
+          display: -webkit-box;
+          justify-content: space-between;
+          -webkit-box-pack: justify;
+          align-items: center;
+        "
+      >
+        <h1>Sales & Expense Report</h1>
+        <h1>Date: <%=date%></h1>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Product</th>
+            <th>Cash</th>
+            <th>Card</th>
+            <th>Cashfree</th>
+            <th>Online</th>
+            <th>Total</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody style="vertical-align: top">
+          <!-- Sample table rows with dummy data -->
+          <% reports?.forEach((doc)=> {%>
+          <tr
+            style="background-color: <%= doc?.type === 'expense' ? '#ffcccb' : '#fff' %>;"
+          >
+            <td style="width: 120px"><%=doc.time%></td>
+            <td>
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <% doc?.products?.forEach((d) => {%>
+                <p style="margin: 0"><%=d%></p>
+                <%})%>
+              </div>
+            </td>
+            <td>&#8377;&nbsp;<%=doc?.cash%></td>
+            <td>&#8377;&nbsp;<%=doc?.card%></td>
+            <td>&#8377;&nbsp;<%=doc?.cashfree%></td>
+            <td>&#8377;&nbsp;<%=doc?.online%></td>
+            <td>
+              <%= doc?.type === 'expense' ? '-₹ ' + doc?.total : '₹ ' +
+              doc?.total%>
+            </td>
+            <td><%=doc.name%></td>
+          </tr>
+          <%})%>
+          <tr>
+            <td class="subtotal" colspan="2">Subtotal</td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=cash%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=card%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=cashfree%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=online%></td>
+            <td class="subtotal" colspan="1">&#8377;&nbsp;<%=total%></td>
+            <td class="subtotal" colspan="1"></td>
+          </tr>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+      <div class="summary">
+        <h2>Summary</h2>
+        <table style="max-width: 400px">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody style="vertical-align: top">
+            <tr>
+              <td>Cash</td>
+              <td><strong>&#8377;&nbsp;<%=cash%></strong></td>
+            </tr>
+            <tr>
+              <td>Card</td>
+              <td><strong>&#8377;&nbsp;<%=card%></strong></td>
+            </tr>
+            <tr>
+              <td>Cashfree</td>
+              <td><strong>&#8377;&nbsp;<%=cashfree%></strong></td>
+            </tr>
+            <tr>
+              <td>Online</td>
+              <td><strong>&#8377;&nbsp;<%=online%></strong></td>
+            </tr>
+            <tr>
+              <td>Expenses</td>
+              <td>
+                <strong style="color: #e3073c"
+                  >-&#8377;&nbsp;<%=expense%></strong
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="total">
+        <h2>Total Sales</h2>
+        <p>&#8377;&nbsp;<%=total%></p>
+      </div>
+    </div>
+  </body>
+</html>

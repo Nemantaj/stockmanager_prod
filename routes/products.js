@@ -17,5 +17,11 @@ router.get(
   isAdmin,
   ProductController.getProductsByDate
 );
+router.get("/get-pdf-data/:date", isAdmin, ProductController.getPdfData);
+router.post("/print-pdf", isAdmin, ProductController.printPDF);
+router.get("/clear", isAdmin, ProductController.clear);
+router.post("/get-stocks", isAdmin, ProductController.getStocks);
+router.get("/get-all-stocks", isAdmin, ProductController.getAllStocks);
+router.post("/create-record", isAdmin, ProductController.createRecord);
 
 module.exports = router;

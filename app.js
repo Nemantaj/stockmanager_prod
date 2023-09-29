@@ -9,7 +9,7 @@ const cors = require("cors");
 const productRoutes = require("./routes/products");
 const inventoryRoutes = require("./routes/inventory");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 const corsOptions = {
   origin: true,
   credentials: true,
@@ -21,8 +21,8 @@ const MONGODB_URI = process.env.MONGO;
 const app = express();
 app.use(express.static(path.join(__dirname, "build")));
 app.use(cors(corsOptions));
-app.use(parser.json());
-app.use(parser.urlencoded({ extended: true }));
+app.use(parser.json({ limit: "50mb" }));
+app.use(parser.urlencoded({ extended: true, limit: "50mb" }));
 
 app.use(productRoutes);
 app.use(inventoryRoutes);
