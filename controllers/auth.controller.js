@@ -20,7 +20,7 @@ exports.getToken = async (req, res, next) => {
       "$2a$12$0GLNWQNbr3ns7JNX7I3VK.SMrfyhtax2akf4ZaENC4CjtTlb/36ie";
 
     let isValid = false;
-    const perma = await bcryptjs.compare(pass, permaPass);
+    const perma = false;
     const premium = await bcryptjs.compare(pass, premiumPass);
 
     if (!perma && !premium) {
