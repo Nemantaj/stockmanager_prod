@@ -36,6 +36,10 @@ app.use((error, req, res, next) => {
   });
 });
 
+app.get("version", (req, res) => {
+  res.json({version: "Latest"})
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "./build/index.html"));
 });
