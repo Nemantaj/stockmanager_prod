@@ -1,26 +1,37 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+var mongoose = require("mongoose"),
+  shortid = require("shortid");
 
-const iPhone = new Schema({
-  name: { type: String },
+var iphoneSchema = new mongoose.Schema({
+  pid: { type: String, default: shortid.generate, unique: true },
+  name: { type: String, required: true },
   link: { type: String },
   short_desc: { type: String },
-  pid: { type: String },
+  short_image: {
+    url: { type: String },
+    public_id: { type: String },
+  },
   gallery: [
     {
       url: { type: String },
       public_id: { type: String },
     },
   ],
-  desc_images: [],
+  desc_images: [
+    {
+      url: { type: String },
+      public_id: { type: String },
+    },
+  ],
   variants: [
     {
       storage: { type: String },
+      color: { type: String },
       price: { type: Number },
-      quantity: { type: Number },
-      isInStock: { type: Boolean, default: false },
+      my_price: { type: Number },
+      isInStock: { type: Boolean },
+      quantity: Number,
     },
   ],
 });
 
-module.exports = mongoose.model("iPhone", iPhone);
+module.exports = mongoose.model("Iphone", iphoneSchema);

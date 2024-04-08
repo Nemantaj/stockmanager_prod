@@ -1,27 +1,38 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+var mongoose = require("mongoose"),
+  shortid = require("shortid");
 
-const iWatches = new Schema({
-  name: { type: String },
+var iwatchSchema = new mongoose.Schema({
+  pid: { type: String, default: shortid.generate, unique: true },
+  name: { type: String, required: true },
   link: { type: String },
   short_desc: { type: String },
-  pid: { type: String },
+  short_image: {
+    url: String,
+    public_id: String,
+  },
   gallery: [
+    {
+      url: String,
+      public_id: String,
+    },
+  ],
+  desc_images: [
     {
       url: { type: String },
       public_id: { type: String },
     },
   ],
-  desc_images: [],
   variants: [
     {
-      size: { type: String },
       type: { type: String },
+      color: { type: String },
       price: { type: Number },
-      quantity: { type: Number },
-      isInStock: { type: Boolean, default: false },
+      my_price: { type: Number },
+      size: { type: String },
+      quantity: Number,
+      isInStock: { type: Boolean },
     },
   ],
 });
 
-module.exports = mongoose.model("iWatch", iWatches);
+module.exports = mongoose.model("Iwatch", iwatchSchema);
