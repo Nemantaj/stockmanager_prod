@@ -24,6 +24,11 @@ app.use(cors(corsOptions));
 app.use(parser.json({ limit: "50mb" }));
 app.use(parser.urlencoded({ extended: true, limit: "50mb" }));
 
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 app.use(productRoutes);
 app.use(inventoryRoutes);
 
