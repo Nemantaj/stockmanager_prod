@@ -11,6 +11,8 @@ const Stock = require("../models/stock");
 const mongoose = require("mongoose");
 const db = mongoose.connection.db;
 const Order = mongoose.model("Order", new mongoose.Schema(), "orders");
+const Customer = require("../models/Customer");
+const Udhar = require("../models/Udhar");
 const Voucher = mongoose.model(
   "Vouchertable",
   new mongoose.Schema(),
@@ -38,6 +40,92 @@ exports.getInventory = (req, res, next) => {
       }
       next(err);
     });
+};
+
+exports.getUdharByDate = async (req, res, next) => {
+  try {
+    const gteDate = new Date(req.query.gte);
+    const lteDate = new Date(req.query.lte);
+    const adjLteDate = lteDate.setMilliseconds(86340000);
+
+    if (!gteDate || !lteDate) {
+      const error = new Error(
+        "Error occured while trying to retrieve orders!."
+      );
+      error.title = "Error Occured";
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const items = await Udhar.aggregate([
+      {
+        $match: {
+          order_date: {
+            $gte: gteDate,
+            $lt: new Date(adjLteDate),
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "customers",
+          localField: "customer",
+          foreignField: "_id",
+          as: "customer",
+        },
+      },
+      { $unwind: "$customer" },
+      {
+        $lookup: {
+          from: "orders",
+          localField: "billno",
+          foreignField: "billno",
+          as: "order",
+        },
+      },
+      { $unwind: "$order" },
+      { $sort: { order_date: -1 } },
+    ]);
+
+    return res.json(items);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getSingleUdhar = async (req, res, next) => {
+  try {
+    const billno = req.params.billno;
+
+    let bill = await Udhar.findOne({ billno }).populate("customer").lean();
+    const order = await Order.findOne({ billno: +billno }).lean();
+
+    console.log(order);
+
+    bill.order = order;
+    return res.json({ ...bill, order });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.markLoanComplete = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    await Udhar.findByIdAndUpdate(_id, { $set: { loanComplete: true } });
+    return res.json({ success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 exports.getOrdersByDate = (req, res, next) => {
@@ -414,6 +502,12 @@ exports.printPDF = async (req, res, next) => {
             : doc?.payment_type === "Online"
             ? doc?.total
             : 0,
+        udhar:
+          doc?.payment_type === "Other"
+            ? doc?.paid_struc?.loaned
+            : doc?.payment_type === "Online"
+            ? doc?.total
+            : 0,
         total: doc?.total,
         name: doc?.billName,
         Date: doc?.order_date,
@@ -452,6 +546,7 @@ exports.printPDF = async (req, res, next) => {
       card = 0,
       cashfree = 0,
       online = 0,
+      udhar = 0,
       expense = 0;
 
     expense = expenses?.reduce((a, b) => a + b?.total, 0);
@@ -471,8 +566,12 @@ exports.printPDF = async (req, res, next) => {
       (a, b) => a + (b?.online !== undefined ? b?.online : 0),
       0
     );
+    udhar = orders?.reduce(
+      (a, b) => a + (b?.udhar !== undefined ? b?.udhar : 0),
+      0
+    );
 
-    total = cash + card + cashfree + online - expense;
+    total = cash + card + cashfree + online + udhar - expense;
 
     var templateEjs = fs.readFileSync(
       path.join(__dirname + "/print.ejs"),
@@ -487,6 +586,7 @@ exports.printPDF = async (req, res, next) => {
       card,
       cashfree,
       online,
+      udhar,
       expense,
     });
 
