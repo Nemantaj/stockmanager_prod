@@ -117,8 +117,13 @@ exports.getSingleUdhar = async (req, res, next) => {
 
 exports.markLoanComplete = async (req, res, next) => {
   try {
-    const _id = req.params.id;
-    await Udhar.findByIdAndUpdate(_id, { $set: { loanComplete: true } });
+    const { amount, _id } = req.body;
+    let udhar = await Udhar.findById(_id);
+    udhar.balance = udhar.balance - +amount;
+    udhar.total_paid = udhar.total_paid + +amount;
+    udhar.payments = [...(udhar.payments ?? []), { date: new Date(), amount }];
+
+    await udhar.save();
     return res.json({ success: true });
   } catch (err) {
     if (!err.statusCode) {
@@ -592,7 +597,7 @@ exports.printPDF = async (req, res, next) => {
 
     var options = {
       displayHeaderFooter: false,
-      format: "A3",
+      format: "A2",
       margin: "0px",
       printBackground: true,
     };

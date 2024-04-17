@@ -23,7 +23,7 @@ router.get("/get-pdf-data/:date", isAdmin, ProductController.getPdfData);
 router.post("/print-pdf", isAdmin, ProductController.printPDF);
 router.get("/clear", isAdmin, ProductController.clear);
 router.post("/get-stocks", isAdmin, ProductController.getStocks);
-router.get("/mark-loan-complete/:id", ProductController.markLoanComplete);
+router.post("/mark-loan-complete", ProductController.markLoanComplete);
 router.get("/get-all-stocks", isAdmin, ProductController.getAllStocks);
 router.post("/create-record", isAdmin, ProductController.createRecord);
 
