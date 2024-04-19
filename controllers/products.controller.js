@@ -507,12 +507,7 @@ exports.printPDF = async (req, res, next) => {
             : doc?.payment_type === "Online"
             ? doc?.total
             : 0,
-        udhar:
-          doc?.payment_type === "Other"
-            ? doc?.paid_struc?.loaned
-            : doc?.payment_type === "Online"
-            ? doc?.total
-            : 0,
+        udhar: doc?.paid_struc?.loaned ?? 0,
         total: doc?.total,
         name: doc?.billName,
         Date: doc?.order_date,
