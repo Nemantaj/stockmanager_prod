@@ -6,5 +6,9 @@
    ],
    "routes": [
       { "src": "/(.*)", "dest": "/app.js" }
-   ]
+   ],
+    "crons": [{
+    "path": "/send-summary-report",
+    "schedule": "0 21 * * *"
+  }]
 }
