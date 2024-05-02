@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const productRoutes = require("./routes/products");
 const inventoryRoutes = require("./routes/inventory");
+const { sendSummaryReport } = require("./controllers/products.controller");
 
 const PORT = process.env.PORT || 3001;
 const corsOptions = {
@@ -31,6 +32,11 @@ app.use((req, res, next) => {
 
 app.use(productRoutes);
 app.use(inventoryRoutes);
+
+app.get("/send-summary-report", async (req, res, next) => {
+  await sendSummaryReport();
+  return res.json({ success: true });
+});
 
 app.use((error, req, res, next) => {
   console.log(error);

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Summary Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .report {
+        font-family: "Open Sans", sans-serif !important;
+        max-width: 768px;
+        margin: 0 auto;
+        border-radius: 4px !important;
+        overflow: hidden;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        border-radius: 4px !important;
+      }
+
+      td,
+      th {
+        text-align: left;
+        padding: 8px;
+        border-bottom: 1px solid #d8d8d8;
+      }
+
+      th {
+        background-color: #dff1e5;
+        padding: 10px 7.5px;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+
+      td {
+        font-weight: 500;
+      }
+
+      .metric-row {
+        /* background: #fbfbfb; */
+        font-weight: 600;
+        padding-left: 20px;
+        color: #413f66;
+      }
+
+      .ta {
+        text-align: center;
+        font-weight: 600;
+        color: #121212;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="report">
+      <table>
+        <tr style="font-size: 14px">
+          <th style="padding-left: 20px; font-size: 12.5px">
+            Metrics<br />
+            <span style="color: #696969; font-size: 10.5px; font-weight: 500"
+              ><%=date%></span
+            >
+          </th>
+          <th class="ta" style="padding-left: 20px; font-size: 12.5px">
+            Today<br />
+            <span style="color: #696969; font-size: 10.5px; font-weight: 500"
+              ><%=date%></span
+            >
+          </th>
+          <th class="ta" style="padding-left: 20px; font-size: 12.5px">
+            This Month<br />
+            <span style="color: #696969; font-size: 10.5px; font-weight: 500"
+              ><%=month%></span
+            >
+          </th>
+        </tr>
+
+        <tr>
+          <td class="metric-row">Cash</td>
+          <td class="ta">&#8377; <%=today.cash?.toLocaleString("en-IN")%></td>
+          <td class="ta">
+            &#8377; <%=thisMonth.cash?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr>
+          <td class="metric-row">Online</td>
+          <td class="ta">&#8377; <%=today.online?.toLocaleString("en-IN")%></td>
+          <td class="ta">
+            &#8377; <%=thisMonth.online?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr>
+          <td class="metric-row">Card</td>
+          <td class="ta">&#8377; <%=today.card?.toLocaleString("en-IN")%></td>
+          <td class="ta">
+            &#8377; <%=thisMonth.card?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr>
+          <td class="metric-row">Cashfree</td>
+          <td class="ta">
+            &#8377; <%=today.cashfree?.toLocaleString("en-IN")%>
+          </td>
+          <td class="ta">
+            &#8377; <%=thisMonth.cashfree?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr style="background-color: #e3e8ff">
+          <td class="metric-row">Udhar</td>
+          <td class="ta">&#8377; <%=today.udhar?.toLocaleString("en-IN")%></td>
+          <td class="ta">
+            &#8377; <%=thisMonth.udhar?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr style="background-color: #ffe6e6">
+          <td class="metric-row">Expense / Store</td>
+          <td class="ta">&#8377; <%=today.store?.toLocaleString("en-IN")%></td>
+          <td class="ta">
+            &#8377; <%=thisMonth.store?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr
+          style="
+            background-color: #ffe6e6;
+            border-bottom: 3px solid #121212 !important;
+          "
+        >
+          <td class="metric-row">Expense / Personal</td>
+          <td class="ta">
+            &#8377; <%=today.personal?.toLocaleString("en-IN")%>
+          </td>
+          <td class="ta">
+            &#8377; <%=thisMonth.personal?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr style="border-bottom: 3px solid #121212 !important">
+          <td class="metric-row">Total</td>
+          <td class="ta">&#8377; <%=today.sales?.toLocaleString("en-IN")%></td>
+          <td class="ta">
+            &#8377; <%=thisMonth.sales?.toLocaleString("en-IN")%>
+          </td>
+        </tr>
+        <tr>
+          <td class="metric-row">Products Sold</td>
+          <td class="ta"><%=today.products%></td>
+          <td class="ta"><%=thisMonth.products%></td>
+        </tr>
+        <tr>
+          <td class="metric-row">Total Bills</td>
+          <td class="ta"><%=today.orders%></td>
+          <td class="ta"><%=thisMonth.orders%></td>
+        </tr>
+      </table>
+      <div
+        style="
+          background: linear-gradient(
+            90deg,
+            rgba(7, 199, 176, 1) 0%,
+            rgba(140, 204, 144, 1) 50%,
+            rgba(7, 177, 167, 1) 100%
+          );
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <p style="margin: 0; padding: 15px 20px; font-size: 14px; color: #fff">
+          Marvans Sales Report
+        </p>
+        <p style="margin: 0; padding: 15px 20px; font-size: 14px; color: #fff">
+          Auto Generated Report for <%=date%>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

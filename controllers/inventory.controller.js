@@ -85,6 +85,7 @@ exports.addStock = async (req, res, next) => {
       desc: req.body.desc,
       add: req.body.add,
       prev: prevQty.quantity,
+      reason: "stock-increased",
     });
 
     console.log(newInvtry);
@@ -178,7 +179,8 @@ exports.subStock = async (req, res, next) => {
       name: req.body.name,
       desc: req.body.desc,
       sub: req.body.sub,
-      prev: prevQty.quantity
+      prev: prevQty.quantity,
+      reason: "stock-decreased",
     });
 
     await newInvtry.save();

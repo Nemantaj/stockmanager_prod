@@ -8,6 +8,8 @@ router.get("/get-inventory", isAdmin, ProductController.getInventory);
 router.get("/get-orders", isAdmin, ProductController.getOrdersByDate);
 router.get("/get-udhars", isAdmin, ProductController.getUdharByDate);
 router.get("/get-single-udhar/:billno", ProductController.getSingleUdhar);
+router.get("/get-udhars", isAdmin, ProductController.getUdharByDate);
+router.get("/get-single-udhar/:billno", ProductController.getSingleUdhar);
 router.get("/group-orders", isAdmin, ProductController.groupByDate);
 router.get(
   "/get-vouchers-by-date",
@@ -24,7 +26,13 @@ router.post("/print-pdf", isAdmin, ProductController.printPDF);
 router.get("/clear", isAdmin, ProductController.clear);
 router.post("/get-stocks", isAdmin, ProductController.getStocks);
 router.post("/mark-loan-complete", ProductController.markLoanComplete);
+router.post("/mark-loan-complete", ProductController.markLoanComplete);
 router.get("/get-all-stocks", isAdmin, ProductController.getAllStocks);
 router.post("/create-record", isAdmin, ProductController.createRecord);
+router.get(
+  "/delete-expense-record/:id",
+  isAdmin,
+  ProductController.deleteExpenseRecord
+);
 
 module.exports = router;
