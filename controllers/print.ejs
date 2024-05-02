@@ -87,7 +87,6 @@
             <th>Cashfree</th>
             <th>Online</th>
             <th>Udhar</th>
-            <th>Udhar</th>
             <th>Total</th>
             <th>Name</th>
           </tr>
@@ -96,7 +95,6 @@
           <!-- Sample table rows with dummy data -->
           <% reports?.forEach((doc)=> {%>
           <tr
-            style="background-color: <%=doc?.udhar > 0  ? '#9adbb9' : doc?.type === 'expense' ? '#ffcccb' : '#fff' %>;"
             style="background-color: <%=doc?.udhar > 0  ? '#9adbb9' : doc?.type === 'expense' ? '#ffcccb' : '#fff' %>;"
           >
             <td style="width: 120px"><%=doc.time%></td>
@@ -159,26 +157,15 @@
               <td>
                 <strong>&#8377;&nbsp;<%=cash?.toLocaleString("en-IN")%></strong>
               </td>
-              <td>
-                <strong>&#8377;&nbsp;<%=cash?.toLocaleString("en-IN")%></strong>
-              </td>
             </tr>
             <tr>
               <td>Card</td>
               <td>
                 <strong>&#8377;&nbsp;<%=card?.toLocaleString("en-IN")%></strong>
               </td>
-              <td>
-                <strong>&#8377;&nbsp;<%=card?.toLocaleString("en-IN")%></strong>
-              </td>
             </tr>
             <tr>
               <td>Cashfree</td>
-              <td>
-                <strong
-                  >&#8377;&nbsp;<%=cashfree?.toLocaleString("en-IN")%></strong
-                >
-              </td>
               <td>
                 <strong
                   >&#8377;&nbsp;<%=cashfree?.toLocaleString("en-IN")%></strong
@@ -222,7 +209,6 @@
       </div>
       <div class="total">
         <h2>Total Sales</h2>
-        <p>&#8377;&nbsp;<%=total?.toLocaleString("en-IN")%></p>
         <p>&#8377;&nbsp;<%=total?.toLocaleString("en-IN")%></p>
       </div>
     </div>

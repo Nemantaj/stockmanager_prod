@@ -683,10 +683,6 @@ exports.printPDF = async (req, res, next) => {
       (a, b) => a + (b?.udhar !== undefined ? b?.udhar : 0),
       0
     );
-    udhar = orders?.reduce(
-      (a, b) => a + (b?.udhar !== undefined ? b?.udhar : 0),
-      0
-    );
 
     total = cash + card + cashfree + online + udhar - expense + personal;
 
