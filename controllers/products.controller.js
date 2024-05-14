@@ -277,6 +277,7 @@ exports.groupByDate = (req, res, next) => {
           $gte: gteDate,
           $lt: new Date(adjLteDate),
         },
+        isPaid: true,
       },
     },
     {
