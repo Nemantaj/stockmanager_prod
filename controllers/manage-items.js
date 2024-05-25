@@ -173,6 +173,42 @@ exports.getItems = async (req, res, next) => {
   }
 };
 
+exports.getItems2 = async (req, res, next) => {
+  try {
+    let items = await ManageItems.find({}).lean();
+    let groupedItems = {
+      iphones: [],
+      ipads: [],
+      androids: [],
+      iwatches: [],
+      airpods: [],
+    };
+
+    items.forEach((doc) => {
+      if (doc?.quantity > 0 && doc?.price > 0) {
+        if (doc.productType === "iPhone") {
+          groupedItems.iphones.push(doc);
+        } else if (doc.productType === "iPad") {
+          groupedItems.ipads.push(doc);
+        } else if (doc.productType === "Android") {
+          groupedItems.androids.push(doc);
+        } else if (doc.productType === "iWatch") {
+          groupedItems.iwatches.push(doc);
+        } else {
+          groupedItems.airpods.push(doc);
+        }
+      }
+    });
+
+    return res.json({ items: groupedItems, success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 exports.editPrice = async (req, res, next) => {
   try {
     let { id, price } = req.body;
