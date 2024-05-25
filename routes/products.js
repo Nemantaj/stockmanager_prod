@@ -1,5 +1,6 @@
 const express = require("express");
 const ProductController = require("../controllers/products.controller");
+const MangeItemsController = require("../controllers/manage-items");
 const isAdmin = require("../utils/is-admin");
 
 const router = express.Router();
@@ -34,5 +35,9 @@ router.get(
   isAdmin,
   ProductController.deleteExpenseRecord
 );
+router.get("/sync-items", MangeItemsController.syncModels);
+router.get("/get-manage-items", MangeItemsController.getItems);
+router.post("/update-price", MangeItemsController.editPrice);
+router.post("/update-order", MangeItemsController.editOrder);
 
 module.exports = router;

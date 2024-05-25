@@ -4,6 +4,7 @@ const ejs = require("ejs");
 const puppeteer = require("../utils/pupeeteer");
 const nodeHtmlToImage = require("node-html-to-image");
 
+
 const iPhones = require("../models/iPhones");
 const iPods = require("../models/iPods");
 const iWatches = require("../models/iWatches");
@@ -277,7 +278,6 @@ exports.groupByDate = (req, res, next) => {
           $gte: gteDate,
           $lt: new Date(adjLteDate),
         },
-        isPaid: true,
       },
     },
     {
@@ -927,10 +927,12 @@ exports.sendSummaryReport = async () => {
       }
     );
 
-    const bufferImage = await nodeHtmlToImage({
-      html: toc,
-      selector: ".report",
-    });
+    const bufferImage = await puppeteer.getImageBuffer(toc, {});
+
+    // const bufferImage = await nodeHtmlToImage({
+    //   html: toc,
+    //   selector: ".report",
+    // });
 
     const file = bucket.file(`sales/${moment().toISOString()}`);
     const stream = file.createWriteStream({
