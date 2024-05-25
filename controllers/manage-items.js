@@ -164,6 +164,20 @@ exports.getItems = async (req, res, next) => {
       }
     });
 
+    groupedItems.iphones = groupedItems.iphones?.sort(
+      (a, b) => a.order - b.order
+    );
+    groupedItems.androids = groupedItems.androids?.sort(
+      (a, b) => a.order - b.order
+    );
+    groupedItems.ipads = groupedItems.ipads?.sort((a, b) => a.order - b.order);
+    groupedItems.iwatches = groupedItems.iwatches?.sort(
+      (a, b) => a.order - b.order
+    );
+    groupedItems.airpods = groupedItems.airpods?.sort(
+      (a, b) => a.order - b.order
+    );
+
     return res.json({ items: groupedItems, success: true });
   } catch (err) {
     if (!err.statusCode) {
