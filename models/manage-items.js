@@ -13,6 +13,8 @@ const schema = new Schema(
     variant: String,
     price: { type: Number },
     quantity: Number,
+    isClone: { type: Boolean, default: false },
+    cloneSuffix: String,
   },
   { timestamps: true }
 );

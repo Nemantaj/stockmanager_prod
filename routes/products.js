@@ -40,5 +40,7 @@ router.get("/get-manage-items", MangeItemsController.getItems);
 router.get("/get-manage-items2", MangeItemsController.getItems2);
 router.post("/update-price", MangeItemsController.editPrice);
 router.post("/update-order", MangeItemsController.editOrder);
+router.post("/create-clone", MangeItemsController.createClone);
+router.get("/delete-manage-item/:id", MangeItemsController.deleteItem);
 
 module.exports = router;

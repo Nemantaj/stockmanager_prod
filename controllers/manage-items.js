@@ -252,3 +252,40 @@ exports.editOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.createClone = async (req, res, next) => {
+  try {
+    const { _id, name } = req.body;
+
+    const productToClone = await ManageItems.findById(_id).lean();
+    delete productToClone._id;
+    const newDoc = new ManageItems({
+      ...productToClone,
+      isClone: true,
+      cloneSuffix: `${name}`,
+    });
+
+    await newDoc.save();
+    return res.json({ success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.deleteItem = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    await ManageItems.findByIdAndRemove(id);
+
+    return res.json({ success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
