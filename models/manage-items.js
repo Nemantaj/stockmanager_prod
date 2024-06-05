@@ -7,7 +7,7 @@ const schema = new Schema(
     vid: Schema.Types.ObjectId,
     productType: String,
     schema: String,
-    order: Number,
+    order: { type: Number, default: 600 },
     name: String,
     link: String,
     variant: String,

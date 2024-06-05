@@ -137,6 +137,21 @@ exports.syncModels = async (req, res, next) => {
   }
 };
 
+exports.createItem = async (req, res, next) => {
+  try {
+    const doc = req.body;
+    let newDoc = new ManageItems(doc);
+
+    await newDoc.save();
+    return res.json({ success: true });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 exports.getItems = async (req, res, next) => {
   try {
     let items = await ManageItems.find({}).lean();
@@ -149,18 +164,16 @@ exports.getItems = async (req, res, next) => {
     };
 
     items.forEach((doc) => {
-      if (doc?.quantity > 0) {
-        if (doc.productType === "iPhone") {
-          groupedItems.iphones.push(doc);
-        } else if (doc.productType === "iPad") {
-          groupedItems.ipads.push(doc);
-        } else if (doc.productType === "Android") {
-          groupedItems.androids.push(doc);
-        } else if (doc.productType === "iWatch") {
-          groupedItems.iwatches.push(doc);
-        } else {
-          groupedItems.airpods.push(doc);
-        }
+      if (doc.productType === "iPhone") {
+        groupedItems.iphones.push(doc);
+      } else if (doc.productType === "iPad") {
+        groupedItems.ipads.push(doc);
+      } else if (doc.productType === "Android") {
+        groupedItems.androids.push(doc);
+      } else if (doc.productType === "iWatch") {
+        groupedItems.iwatches.push(doc);
+      } else {
+        groupedItems.airpods.push(doc);
       }
     });
 
@@ -199,7 +212,7 @@ exports.getItems2 = async (req, res, next) => {
     };
 
     items.forEach((doc) => {
-      if (doc?.quantity > 0 && doc?.price > 0) {
+      if (doc?.price > 0) {
         if (doc.productType === "iPhone") {
           groupedItems.iphones.push(doc);
         } else if (doc.productType === "iPad") {
@@ -225,8 +238,8 @@ exports.getItems2 = async (req, res, next) => {
 
 exports.editPrice = async (req, res, next) => {
   try {
-    let { id, price } = req.body;
-    await ManageItems.findByIdAndUpdate(id, { $set: { price: +price } });
+    let { id, doc } = req.body;
+    await ManageItems.findByIdAndUpdate(id, { $set: { ...doc } });
     return res.json({ success: true });
   } catch (err) {
     if (!err.statusCode) {

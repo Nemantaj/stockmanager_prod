@@ -4,7 +4,6 @@ const ejs = require("ejs");
 const puppeteer = require("../utils/pupeeteer");
 const nodeHtmlToImage = require("node-html-to-image");
 
-
 const iPhones = require("../models/iPhones");
 const iPods = require("../models/iPods");
 const iWatches = require("../models/iWatches");
