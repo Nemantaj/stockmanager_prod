@@ -5,7 +5,7 @@ const isAdmin = require("../utils/is-admin");
 
 const router = express.Router();
 
-router.get("/get-inventory", isAdmin, ProductController.getInventory);
+router.get("/get-inventory", ProductController.getInventory);
 router.get("/get-orders", isAdmin, ProductController.getOrdersByDate);
 router.get("/get-udhars", isAdmin, ProductController.getUdharByDate);
 router.get("/get-single-udhar/:billno", ProductController.getSingleUdhar);
