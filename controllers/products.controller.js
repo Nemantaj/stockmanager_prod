@@ -214,7 +214,6 @@ exports.getSingleBill = async (req, res, next) => {
     const billno = req.params.billno;
 
     let bill = await Order.findOne({ billno: +billno })
-      .populate("customer")
       .lean();
 
     bill.customer = await Customer.findById(bill?.customer).lean();
