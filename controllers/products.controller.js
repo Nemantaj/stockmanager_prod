@@ -209,6 +209,23 @@ exports.getSingleUdhar = async (req, res, next) => {
   }
 };
 
+exports.getSingleBill = async (req, res, next) => {
+  try {
+    const billno = req.params.billno;
+
+    let bill = await Order.findOne({ billno: +billno })
+      .populate("customer")
+      .lean();
+
+    return res.json({ ...bill });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 exports.markLoanComplete = async (req, res, next) => {
   try {
     const { amount, _id } = req.body;

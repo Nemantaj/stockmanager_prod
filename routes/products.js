@@ -9,6 +9,7 @@ router.get("/get-inventory", ProductController.getInventory);
 router.get("/get-orders", isAdmin, ProductController.getOrdersByDate);
 router.get("/get-udhars", isAdmin, ProductController.getUdharByDate);
 router.get("/get-single-udhar/:billno", ProductController.getSingleUdhar);
+router.get("/get-single-bill/:billno", ProductController.getSingleBill);
 router.get("/get-udhars", isAdmin, ProductController.getUdharByDate);
 router.get("/get-single-udhar/:billno", ProductController.getSingleUdhar);
 router.get("/group-orders", isAdmin, ProductController.groupByDate);
