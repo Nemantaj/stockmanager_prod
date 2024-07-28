@@ -217,7 +217,7 @@ exports.getSingleBill = async (req, res, next) => {
       .populate("customer")
       .lean();
 
-    return res.json({ ...bill });
+    return res.json(bill);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
