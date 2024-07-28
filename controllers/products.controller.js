@@ -217,6 +217,7 @@ exports.getSingleBill = async (req, res, next) => {
       .populate("customer")
       .lean();
 
+    bill.customer = await Customer.findById(bill?.customer).lean();
     return res.json(bill);
   } catch (err) {
     if (!err.statusCode) {
