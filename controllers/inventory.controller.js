@@ -194,7 +194,16 @@ exports.subStock = async (req, res, next) => {
 };
 
 exports.getHistory = (req, res, next) => {
-  Inventory.find({})
+  const gteDate = new Date(req.query.gte);
+  const lteDate = new Date(req.query.lte);
+  const adjLteDate = lteDate.setMilliseconds(86340000);
+
+  Inventory.find({
+    dateAdded: {
+      $gte: gteDate,
+      $lt: new Date(adjLteDate),
+    },
+  })
     .sort({ dateAdded: -1 })
     .then((result) => {
       res.json(result);
