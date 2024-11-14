@@ -261,7 +261,6 @@ exports.getOrdersByDate = (req, res, next) => {
       $gte: gteDate,
       $lt: new Date(adjLteDate),
     },
-    isPaid: true,
   })
     .sort({ order_date: 1 })
     .then((result) => {
@@ -290,7 +289,6 @@ exports.groupByDate = (req, res, next) => {
   Order.aggregate([
     {
       $match: {
-        isPaid: true,
         order_date: {
           $gte: gteDate,
           $lt: new Date(adjLteDate),
@@ -486,7 +484,6 @@ exports.getProductsByDate = (req, res, next) => {
   Order.aggregate([
     {
       $match: {
-        isPaid: true,
         order_date: {
           $gte: gteDate,
           $lt: new Date(adjLteDate),
