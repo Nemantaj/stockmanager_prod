@@ -247,7 +247,7 @@ exports.getHistory = (req, res, next) => {
   const lteDate = new Date(req.query.lte);
   const adjLteDate = lteDate.setMilliseconds(86340000);
 
-  let schema = alt ? Inventory2 : Invetory1
+  let schema = alt ? Inventory2 : Inventory1
 
   schema.find({
     dateAdded: {
