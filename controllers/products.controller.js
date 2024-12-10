@@ -27,17 +27,32 @@ const Voucher = mongoose.model(
   "vouchertables"
 );
 
+const getSchema = (alt, type) => {
+  if (type === 1) {
+    return alt ? iPhones2 : iPhones;
+  } else if (type === 2) {
+    return alt ? iPods2 : iPods;
+  } else {
+    return alt ? iWatches2 : iWatches;
+  }
+};
+
 exports.getInventory = (req, res, next) => {
+  const alt = req.query.alt;
+  let iph = getSchema(alt, 1),
+    ipd = getSchema(alt, 2),
+    wth = getSchema(alt, 3);
+
   let iphn, ipod;
-  iPhones
+  iph
     .find({})
     .then((result) => {
       iphn = result;
-      return iPods.find({});
+      return ipd.find({});
     })
     .then((result) => {
       ipod = result;
-      return iWatches.find({});
+      return wth.find({});
     })
     .then((result) => {
       res.json({ iphones: iphn, ipods: ipod, iwatches: result });
@@ -218,8 +233,7 @@ exports.getSingleBill = async (req, res, next) => {
   try {
     const billno = req.params.billno;
 
-    let bill = await Order.findOne({ billno: +billno })
-      .lean();
+    let bill = await Order.findOne({ billno: +billno }).lean();
 
     bill.customer = await Customer.findById(bill?.customer).lean();
     return res.json(bill);
@@ -607,26 +621,26 @@ exports.printPDF = async (req, res, next) => {
           doc?.payment_type === "Other"
             ? doc?.paid_struc?.cash
             : doc?.payment_type === "Cash"
-              ? doc?.total
-              : 0,
+            ? doc?.total
+            : 0,
         card:
           doc?.payment_type === "Other"
             ? doc?.paid_struc?.card
             : doc?.payment_type === "Card"
-              ? doc?.total
-              : 0,
+            ? doc?.total
+            : 0,
         cashfree:
           doc?.payment_type === "Other"
             ? 0
             : doc?.payment_type === "Cashfree"
-              ? doc?.total
-              : 0,
+            ? doc?.total
+            : 0,
         online:
           doc?.payment_type === "Other"
             ? doc?.paid_struc?.bank
             : doc?.payment_type === "Online"
-              ? doc?.total
-              : 0,
+            ? doc?.total
+            : 0,
         udhar: doc?.paid_struc?.loaned ?? 0,
         udhar: doc?.paid_struc?.loaned ?? 0,
         total: doc?.total,
@@ -645,7 +659,8 @@ exports.printPDF = async (req, res, next) => {
           timeZone: "Asia/Kolkata",
         }),
         products: [
-          `${doc?.reason} (${doc?.spendOn === "personal" ? "Personal" : "Store"
+          `${doc?.reason} (${
+            doc?.spendOn === "personal" ? "Personal" : "Store"
           })`,
         ],
         cash: 0,

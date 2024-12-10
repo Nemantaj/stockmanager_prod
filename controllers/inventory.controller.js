@@ -1,8 +1,26 @@
-const Inventory = require("../models/Inventory");
-const iPhones = require("../models/iPhones");
-const iWatches = require("../models/iWatches");
-const iPods = require("../models/iPods");
+const Inventory1 = require("../models/Inventory");
+const iPhones1 = require("../models/iPhones");
+const iWatches1 = require("../models/iWatches");
+const iPods1 = require("../models/iPods");
+
+const iPhones2 = require("../models/iPhones");
+const iPods2 = require("../models/iPods");
+const iWatches2 = require("../models/iWatches");
+const Inventory2 = require("../models/Inventory2");
+
 const mongoose = require("mongoose");
+
+const getSchema = (alt, type) => {
+  if (type === 1) {
+    return alt ? iPhones2 : iPhones1;
+  } else if (type === 2) {
+    return alt ? iPods2 : iPods1;
+  } else if (type === 3) {
+    return alt ? iWatches2 : iWatches1;
+  } else {
+    alt ? Inventory2 : Inventory1;
+  }
+};
 
 exports.addStock = async (req, res, next) => {
   if (!req.body) {
@@ -11,6 +29,12 @@ exports.addStock = async (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
+
+  const alt = req.body.alt;
+  let iPhones = getSchema(alt, 1),
+    iPods = getSchema(alt, 2),
+    iWatches = getSchema(alt, 3),
+    Inventory = getSchema(alt, 4);
 
   const id = req.body.id;
   const variantId = req.body.variantId;
@@ -108,6 +132,12 @@ exports.subStock = async (req, res, next) => {
     throw error;
   }
 
+  const alt = req.body.alt;
+  let iPhones = getSchema(alt, 1),
+    iPods = getSchema(alt, 2),
+    iWatches = getSchema(alt, 3),
+    Inventory = getSchema(alt, 4);
+
   let response, previous, prevQty;
   const id = req.body.id;
   const variantId = req.body.variantId;
@@ -194,6 +224,9 @@ exports.subStock = async (req, res, next) => {
 };
 
 exports.getHistory = (req, res, next) => {
+  const alt = req.query.alt;
+  let Inventory = getSchema(alt, 4);
+
   const gteDate = new Date(req.query.gte);
   const lteDate = new Date(req.query.lte);
   const adjLteDate = lteDate.setMilliseconds(86340000);

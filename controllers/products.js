@@ -1,10 +1,29 @@
-const iPhones = require("../models/iPhones");
-const iPods = require("../models/iPods");
-const iWatches = require("../models/iWatches");
+const iPhones1 = require("../models/iPhones");
+const iWatches1 = require("../models/iWatches");
+const iPods1 = require("../models/iPods");
+
+const iPhones2 = require("../models/iPhones");
+const iPods2 = require("../models/iPods");
+const iWatches2 = require("../models/iWatches");
+
+const getSchema = (alt, type) => {
+  if (type === 1) {
+    return alt ? iPhones2 : iPhones1;
+  } else if (type === 2) {
+    return alt ? iPods2 : iPods1;
+  } else {
+    return alt ? iWatches2 : iWatches1;
+  }
+};
 
 exports.addProduct = async (req, res, next) => {
   try {
-    const { type, basic, variants } = req.body;
+    const { type, basic, variants, alt } = req.body;
+
+    let iPhones = getSchema(alt, 1),
+      iPods = getSchema(alt, 2),
+      iWatches = getSchema(alt, 3);
+
     let Schema =
       type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
 
@@ -25,7 +44,12 @@ exports.addProduct = async (req, res, next) => {
 
 exports.editProduct = async (req, res, next) => {
   try {
-    const { type, basic, variants, id } = req.body;
+    const { type, basic, variants, id, alt } = req.body;
+
+    let iPhones = getSchema(alt, 1),
+      iPods = getSchema(alt, 2),
+      iWatches = getSchema(alt, 3);
+
     let Schema =
       type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
 
@@ -44,7 +68,12 @@ exports.editProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
   try {
-    const { id, type } = req.body;
+    const { id, type, alt } = req.body;
+
+    let iPhones = getSchema(alt, 1),
+      iPods = getSchema(alt, 2),
+      iWatches = getSchema(alt, 3);
+
     let Schema =
       type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
 
@@ -60,6 +89,12 @@ exports.deleteProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   try {
+    const alt = req.query.alt;
+
+    let iPhones = getSchema(alt, 1),
+      iPods = getSchema(alt, 2),
+      iWatches = getSchema(alt, 3);
+
     let iphones = await iPhones.find({}).lean();
     let ipods = await iPods.find({}).lean();
     let iwatches = await iWatches.find({}).lean();
@@ -85,7 +120,11 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getSingleProduct = async (req, res, next) => {
   try {
-    const { id, type } = req.body;
+    const { id, type, alt } = req.body;
+
+    let iPhones = getSchema(alt, 1),
+      iPods = getSchema(alt, 2),
+      iWatches = getSchema(alt, 3);
 
     let Schema =
       type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
