@@ -102,7 +102,15 @@ exports.addStock = async (req, res, next) => {
       );
     }
 
-    const newInvtry = new Inventory({
+    const newInvtry = alt ? new Inventory2({
+      dateAdded: new Date(),
+      pid: req.body.pid,
+      name: req.body.name,
+      desc: req.body.desc,
+      add: req.body.add,
+      prev: prevQty.quantity,
+      reason: "stock-increased",
+    }) : new Inventory1({
       dateAdded: new Date(),
       pid: req.body.pid,
       name: req.body.name,
@@ -203,7 +211,15 @@ exports.subStock = async (req, res, next) => {
       );
     }
 
-    const newInvtry = new Inventory({
+    const newInvtry = alt ?  new Inventory2({
+      dateAdded: new Date(),
+      pid: req.body.pid,
+      name: req.body.name,
+      desc: req.body.desc,
+      sub: req.body.sub,
+      prev: prevQty.quantity,
+      reason: "stock-decreased",
+    }) : new Inventory1({
       dateAdded: new Date(),
       pid: req.body.pid,
       name: req.body.name,
