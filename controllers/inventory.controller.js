@@ -3,9 +3,9 @@ const iPhones1 = require("../models/iPhones");
 const iWatches1 = require("../models/iWatches");
 const iPods1 = require("../models/iPods");
 
-const iPhones2 = require("../models/iPhones");
-const iPods2 = require("../models/iPods");
-const iWatches2 = require("../models/iWatches");
+const iPhones2 = require("../models/iPhones2");
+const iPods2 = require("../models/iPods2");
+const iWatches2 = require("../models/iWatches2");
 const Inventory2 = require("../models/Inventory2");
 
 const mongoose = require("mongoose");
