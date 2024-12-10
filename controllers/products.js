@@ -20,12 +20,10 @@ exports.addProduct = async (req, res, next) => {
   try {
     const { type, basic, variants, alt } = req.body;
 
-    let iPhones = getSchema(alt, 1),
-      iPods = getSchema(alt, 2),
-      iWatches = getSchema(alt, 3);
-
     let Schema =
-      type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
+        type === "iPhone" ? iPhones1 : type === "iPod" ? iPods1 : iWatches1,
+      Schema2 =
+        type === "iPhone" ? iPhones2 : type === "iPod" ? iPods2 : iWatches2;
 
     let doc = new Schema({
       ...basic,
@@ -33,6 +31,13 @@ exports.addProduct = async (req, res, next) => {
     });
 
     await doc.save();
+
+    let doc2 = new Schema2({
+      ...basic,
+      variants: variants,
+    });
+    await doc2.save();
+
     return res.json({ success: true });
   } catch (err) {
     if (!err.statusCode) {
@@ -46,14 +51,20 @@ exports.editProduct = async (req, res, next) => {
   try {
     const { type, basic, variants, id, alt } = req.body;
 
-    let iPhones = getSchema(alt, 1),
-      iPods = getSchema(alt, 2),
-      iWatches = getSchema(alt, 3);
-
     let Schema =
-      type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
+        type === "iPhone" ? iPhones1 : type === "iPod" ? iPods1 : iWatches1,
+      Schema2 =
+        type === "iPhone" ? iPhones2 : type === "iPod" ? iPods2 : iWatches2;
 
-    await Schema.findByIdAndUpdate(id, {
+    const sch1 = await Schema.findByIdAndUpdate(
+      id,
+      {
+        $set: type === "iPod" ? { ...basic } : { ...basic, variants: variants },
+      },
+      { new: true }
+    );
+
+    await Schema2.findOneAndUpdate(sch1.name, {
       $set: type === "iPod" ? { ...basic } : { ...basic, variants: variants },
     });
 
@@ -70,14 +81,15 @@ exports.deleteProduct = async (req, res, next) => {
   try {
     const { id, type, alt } = req.body;
 
-    let iPhones = getSchema(alt, 1),
-      iPods = getSchema(alt, 2),
-      iWatches = getSchema(alt, 3);
-
     let Schema =
-      type === "iPhone" ? iPhones : type === "iPod" ? iPods : iWatches;
+        type === "iPhone" ? iPhones1 : type === "iPod" ? iPods1 : iWatches1,
+      Schema2 =
+        type === "iPhone" ? iPhones2 : type === "iPod" ? iPods2 : iWatches2;
 
-    await Schema.findByIdAndRemove(id);
+    const sch = await Schema.findById(id);
+    await Schema2.findOneAndRemove({ name: sch.name });
+    await Schema.findByIdAndDelete(id);
+
     return res.json({ success: true });
   } catch (err) {
     if (!err.statusCode) {
