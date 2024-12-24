@@ -280,7 +280,7 @@ exports.getOrdersByDate = (req, res, next) => {
       $gte: gteDate,
       $lt: new Date(adjLteDate),
     },
-  }).populate("customer")
+  }).populate({ path: 'customer', select: 'name mobile city' })
     .sort({ order_date: 1 })
     .then((result) => {
       res.json(result);
