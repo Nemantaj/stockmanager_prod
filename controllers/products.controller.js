@@ -269,19 +269,41 @@ exports.getOrdersByDate = (req, res, next) => {
   const adjLteDate = lteDate.setMilliseconds(86340000);
 
   if (!gteDate || !lteDate) {
-    const error = new Error("Error occured while trying to retrieve orders!.");
-    error.title = "Error Occured";
+    const error = new Error("Error occurred while trying to retrieve orders.");
+    error.title = "Error Occurred";
     error.statusCode = 422;
     throw error;
   }
 
-  Order.find({
-    order_date: {
-      $gte: gteDate,
-      $lt: new Date(adjLteDate),
+  Order.aggregate([
+    {
+      $match: {
+        order_date: {
+          $gte: gteDate,
+          $lt: new Date(adjLteDate),
+        },
+      },
     },
-  }).populate({ path: 'customer', select: 'name mobile city' })
-    .sort({ order_date: 1 })
+    {
+      $lookup: {
+        from: "customers",
+        localField: "customer",
+        foreignField: "_id",
+        as: "customerDetails",
+      },
+    },
+    {
+      $unwind: {
+        path: "$customerDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $sort: {
+        order_date: 1,
+      },
+    },
+  ])
     .then((result) => {
       res.json(result);
     })
