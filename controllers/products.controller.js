@@ -280,7 +280,7 @@ exports.getOrdersByDate = (req, res, next) => {
       $gte: gteDate,
       $lt: new Date(adjLteDate),
     },
-  })
+  }).populate("customer")
     .sort({ order_date: 1 })
     .then((result) => {
       res.json(result);
@@ -621,26 +621,26 @@ exports.printPDF = async (req, res, next) => {
           doc?.payment_type === "Other"
             ? doc?.paid_struc?.cash
             : doc?.payment_type === "Cash"
-            ? doc?.total
-            : 0,
+              ? doc?.total
+              : 0,
         card:
           doc?.payment_type === "Other"
             ? doc?.paid_struc?.card
             : doc?.payment_type === "Card"
-            ? doc?.total
-            : 0,
+              ? doc?.total
+              : 0,
         cashfree:
           doc?.payment_type === "Other"
             ? 0
             : doc?.payment_type === "Cashfree"
-            ? doc?.total
-            : 0,
+              ? doc?.total
+              : 0,
         online:
           doc?.payment_type === "Other"
             ? doc?.paid_struc?.bank
             : doc?.payment_type === "Online"
-            ? doc?.total
-            : 0,
+              ? doc?.total
+              : 0,
         udhar: doc?.paid_struc?.loaned ?? 0,
         udhar: doc?.paid_struc?.loaned ?? 0,
         total: doc?.total,
@@ -659,8 +659,7 @@ exports.printPDF = async (req, res, next) => {
           timeZone: "Asia/Kolkata",
         }),
         products: [
-          `${doc?.reason} (${
-            doc?.spendOn === "personal" ? "Personal" : "Store"
+          `${doc?.reason} (${doc?.spendOn === "personal" ? "Personal" : "Store"
           })`,
         ],
         cash: 0,
