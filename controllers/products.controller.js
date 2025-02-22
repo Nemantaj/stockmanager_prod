@@ -366,6 +366,11 @@ exports.groupByDate = (req, res, next) => {
             $cond: [{ $eq: ["$payment_type", "Cashfree"] }, "$total", 0],
           },
         },
+        ma: {
+          $sum: {
+            $cond: [{ $eq: ["$payment_type", "Ma"] }, "$total", 0],
+          },
+        },
         other: {
           $sum: {
             $cond: [
@@ -418,6 +423,34 @@ exports.groupByDate = (req, res, next) => {
                 ],
               },
               "$paid_struc.bank",
+              0,
+            ],
+          },
+        },
+        otherCashfree: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $ne: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
+              "$paid_struc.cashfree",
+              0,
+            ],
+          },
+        },
+        otherMa: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $ne: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
+              "$paid_struc.ma",
               0,
             ],
           },
@@ -653,8 +686,14 @@ exports.printPDF = async (req, res, next) => {
               : 0,
         cashfree:
           doc?.payment_type === "Other"
-            ? 0
+            ? doc.paid_struc?.cashfree ?? 0
             : doc?.payment_type === "Cashfree"
+              ? doc?.total
+              : 0,
+        ma:
+          doc?.payment_type === "Other"
+            ? doc.paid_struc?.ma ?? 0
+            : doc?.payment_type === "Ma"
               ? doc?.total
               : 0,
         online:
@@ -707,6 +746,7 @@ exports.printPDF = async (req, res, next) => {
       card = 0,
       cashfree = 0,
       online = 0,
+      ma = 0,
       udhar = 0,
       expense = 0,
       personal = 0;
@@ -734,12 +774,16 @@ exports.printPDF = async (req, res, next) => {
       (a, b) => a + (b?.online !== undefined ? b?.online : 0),
       0
     );
+    ma = orders?.reduce(
+      (a, b) => a + (b?.ma !== undefined ? b?.ma : 0),
+      0
+    );
     udhar = orders?.reduce(
       (a, b) => a + (b?.udhar !== undefined ? b?.udhar : 0),
       0
     );
 
-    total = cash + card + cashfree + online + udhar - expense + personal;
+    total = cash + card + cashfree + online + ma + udhar - expense + personal;
 
     var templateEjs = fs.readFileSync(
       path.join(__dirname + "/print.ejs"),
@@ -753,6 +797,7 @@ exports.printPDF = async (req, res, next) => {
       cash,
       card,
       cashfree,
+      ma,
       online,
       personal,
       udhar,
