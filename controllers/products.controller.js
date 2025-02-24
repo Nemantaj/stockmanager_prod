@@ -670,7 +670,7 @@ exports.printPDF = async (req, res, next) => {
           timeZone: "Asia/Kolkata",
         }),
         products: doc?.products1?.map((d) => {
-          return `${d?.name} ${d?.desc}`;
+          return `${d?.name} ${d?.desc}${doc.is2H ? " (2H)" : ""}`;
         }),
         cash:
           doc?.payment_type === "Other"
