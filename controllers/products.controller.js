@@ -904,6 +904,7 @@ exports.sendSummaryReport = async () => {
       online: 0,
       card: 0,
       cashfree: 0,
+      ma: 0,
       udhar: 0,
       store: 0,
       personal: 0,
@@ -915,11 +916,14 @@ exports.sendSummaryReport = async () => {
         today.online += doc?.payment_type === "Online" ? doc.total : 0;
         today.card += doc?.payment_type === "Card" ? doc.total : 0;
         today.cashfree += doc?.payment_type === "Cashfree" ? doc.total : 0;
+        today.ma += doc?.payment_type === "Ma" ? doc.total : 0;
 
         if (doc.payment_type === "Other") {
           today.cash += doc.paid_struc.cash;
           today.card += doc.paid_struc.card;
           today.online += doc.paid_struc.bank;
+          today.cashfree += doc.paid_struc.cashfree ?? 0;
+          today.ma += doc.paid_struc.ma ?? 0;
 
           today.udhar += doc.paid_struc?.loaned ?? 0;
         }
@@ -929,7 +933,7 @@ exports.sendSummaryReport = async () => {
       }
     });
 
-    today.sales = today.card + today.card + today.online + today.cashfree;
+    today.sales = today.card + today.card + today.online + today.cashfree + today.ma;
     expenseItems.forEach((doc) => {
       if (doc?.spendOn === "personal") {
         today.personal += doc.amount;
@@ -973,6 +977,7 @@ exports.sendSummaryReport = async () => {
       online: 0,
       card: 0,
       cashfree: 0,
+      ma: 0,
       udhar: 0,
       store: 0,
       personal: 0,
@@ -984,11 +989,14 @@ exports.sendSummaryReport = async () => {
         thisMonth.online += doc?.payment_type === "Online" ? doc.total : 0;
         thisMonth.card += doc?.payment_type === "Card" ? doc.total : 0;
         thisMonth.cashfree += doc?.payment_type === "Cashfree" ? doc.total : 0;
+        thisMonth.ma += doc?.payment_type === "Ma" ? doc.total : 0;
 
         if (doc.payment_type === "Other") {
           thisMonth.cash += doc.paid_struc.cash;
           thisMonth.card += doc.paid_struc.card;
           thisMonth.online += doc.paid_struc.bank;
+          thisMonth.cashfree += doc.paid_struc.cashfree ?? 0;
+          thisMonth.ma += doc.paid_struc.ma ?? 0;
 
           thisMonth.udhar += doc.paid_struc?.loaned ?? 0;
         }
@@ -999,7 +1007,7 @@ exports.sendSummaryReport = async () => {
     });
 
     thisMonth.sales =
-      thisMonth.card + thisMonth.card + thisMonth.online + thisMonth.cashfree;
+      thisMonth.card + thisMonth.card + thisMonth.online + thisMonth.cashfree + thisMonth.ma;
     thisMonthAllExpenseItems.forEach((doc) => {
       if (doc?.spendOn === "personal") {
         thisMonth.personal += doc.amount;
