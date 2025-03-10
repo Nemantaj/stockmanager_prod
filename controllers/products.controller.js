@@ -374,7 +374,12 @@ exports.groupByDate = (req, res, next) => {
         other: {
           $sum: {
             $cond: [
-              { $eq: ["$payment_type", "Other"] },
+              {
+                $and: [
+                  { $eq: [{ $type: "$paid_struc" }, "missing"] },
+                  { $eq: ["$payment_type", "Other"] },
+                ],
+              },
               "$total",
               0,
             ],
